@@ -6,7 +6,7 @@ class Task:
             raise ValueError(f"The number of subtasks must be a positive integer")
 
         if total_num_of_instructions % num_of_subtasks != 0:
-            raise ValueError(f"Task of {total_num_of_instructions} mi cannot be evenly \
+            raise ValueError(f"Task of {total_num_of_instructions} instructions cannot be evenly \
             divided into {num_of_subtasks} homogenous subtasks")
 
         self.total_num_of_instructions = total_num_of_instructions
