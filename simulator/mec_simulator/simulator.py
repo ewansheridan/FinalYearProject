@@ -17,6 +17,11 @@ class MecSimulator:
             ComputeNode(self.env, name, mips_per_core, num_of_cores, rtt_ms)
         )
 
+    @property
+    def wallclock_ms(self):
+        t = f"{self.env.now:.2f}".rstrip("0").rstrip(".")
+        return f"{f't = {t} ms':<15}"
+
     def submit_task(self, total_mi, num_of_subtasks):
         self.env.process(self.run_task(Task(total_mi, num_of_subtasks, next(self.task_id_generator))))
 
@@ -28,7 +33,7 @@ class MecSimulator:
         and last 20% on the local device. all of this can be replaced by a smarter
         scheduling function later
         """
-        print(f"Overall task {task.id} starts at t={self.env.now}")
+        print(f"{self.wallclock_ms}Overall task {task.id} started")
 
         halfway_point = len(task.subtasks) * 50 // 100
         other_breakpoint = len(task.subtasks) * 80 // 100
@@ -46,25 +51,25 @@ class MecSimulator:
             subtask_processes.append(p)
 
         yield self.env.all_of(subtask_processes)
-        print(f"Overall task {task.id} completed at t={self.env.now}")
+        print(f"{self.wallclock_ms}Overall task {task.id} completed")
 
 
     def run_subtask(self, subtask: Subtask, compute_node: ComputeNode):
-        print(f"Subtask {subtask.idStr} leaves at t={self.env.now}")
+        print(f"{self.wallclock_ms}Subtask {subtask.idStr} leaves")
         yield self.env.timeout(compute_node.rtt_ms / 2)
 
         with compute_node.cpu.request() as request:
-            print(f"Subtask {subtask.idStr} requests access to a core in {compute_node.name} at t={self.env.now}")
+            print(f"{self.wallclock_ms}Subtask {subtask.idStr} requests access to a core in {compute_node.name}")
             yield request
 
-            print(f"Subtask {subtask.idStr} starts executing in {compute_node.name} at t={self.env.now}")
+            print(f"{self.wallclock_ms}Subtask {subtask.idStr} starts executing in {compute_node.name}")
             yield self.env.timeout(
                 1000 * subtask.mi / compute_node.mips_per_core
             )
-            print(f"Subtask {subtask.idStr} finishes executing at t={self.env.now}")
+            print(f"{self.wallclock_ms}Subtask {subtask.idStr} finishes executing")
 
         yield self.env.timeout(compute_node.rtt_ms / 2)
-        print(f"Subtask {subtask.idStr} done at t={self.env.now}")
+        print(f"{self.wallclock_ms}Subtask {subtask.idStr} complete")
 
     def run(self):
         self.env.run()
