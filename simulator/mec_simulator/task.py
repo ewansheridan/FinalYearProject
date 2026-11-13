@@ -8,7 +8,6 @@ class Task:
             divided into {num_of_subtasks} homogenous subtasks")
 
         self.total_mi = total_mi
-        self.num_of_subtasks = num_of_subtasks
         self.subtasks = []
 
         for i in range(num_of_subtasks):
