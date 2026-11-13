@@ -1,15 +1,31 @@
-# This is a sample Python script.
+import simpy
+from mec_simulator.compute_node import *
 
-# Press Double Shift to search everywhere for classes, files, tool windows, actions, and settings.
+env = simpy.Environment
 
+user = ComputeNode(
+    env=env,
+    name="User Device",
+    mips_per_core=10,
+    num_of_cores=4,
+    rtt=0
+)
 
-def print_hi(name):
-    # Use a breakpoint in the code line below to debug your script.
-    print(f'Hi, {name}')  # Press Ctrl+F8 to toggle the breakpoint.
+edge = ComputeNode(
+    env = env,
+    name = "Edge Cluster",
+    mips_per_core = 1_000,
+    num_of_cores = 8,
+    rtt = 5 # milliseconds
+)
 
+cloud = ComputeNode(
+    env = env,
+    name = "The Cloud",
+    mips_per_core = 10000,
+    num_of_cores = 16,
+    rtt = 30
+)
 
-# Press the green button in the gutter to run the script.
-if __name__ == '__main__':
-    print_hi('PyCharm')
-
-# See PyCharm help at https://www.jetbrains.com/help/pycharm/
+print(edge.name)
+print(edge.cpu.capacity)
