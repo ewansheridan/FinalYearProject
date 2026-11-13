@@ -1,14 +1,12 @@
-import simpy
-from mec_simulator.compute_node import ComputeNode
 from mec_simulator.task import Task
+from mec_simulator.simulator import MecSimulator
 
-env = simpy.Environment()
+simulator = MecSimulator()
 
-user = ComputeNode(env, "User Device", 10, 4, 0)
-edge = ComputeNode(env, "Edge Cluster", 1_000, 8, 5)
-cloud = ComputeNode(env, "The Cloud", 10_000, 16, 30)
+simulator.add_node("The Cloud", 10_000, 32, 50)
+simulator.add_node("Edge Cluster", 1000, 8, 10)
+simulator.add_node("User Device", 100, 4, 0)
 
-print(edge.name)
-print(edge.cpu.capacity)
+simulator.submit_task(Task(100, 5))
+simulator.run()
 
-my_task = Task(100, 5)
