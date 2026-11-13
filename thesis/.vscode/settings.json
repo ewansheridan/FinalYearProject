@@ -1,5 +1,5 @@
 {
-    "latex-workshop.latex.outDir": "%DIR%/build",
+    "latex-workshop.latex.outDir": "%DIR%",
     "latex-workshop.latex.clean.subfolder.enabled": true,
     "latex-workshop.latex.tools": [
         {
@@ -11,11 +11,12 @@
                 "-file-line-error",
                 "-shell-escape",
                 "-pdf",
+                "-auxdir=%DIR%/build",
                 "-outdir=%OUTDIR%",
                 "%DOC%"
             ],
             "env": {
-                "TEXMF_OUTPUT_DIRECTORY": "%OUTDIR%"
+                "TEXMF_OUTPUT_DIRECTORY": "%DIR%/build"
             }
         }
     ],
