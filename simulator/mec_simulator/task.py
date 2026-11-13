@@ -16,3 +16,6 @@ class Task:
 class _Subtask:
     def __init__(self, mi):
         self.mi = mi
+
+# do subtasks really need to exist as objects? instead of a
+# list of them could you not just store how many there are and what the mi per subtask is?
