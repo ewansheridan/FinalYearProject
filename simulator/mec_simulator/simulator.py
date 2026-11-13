@@ -42,6 +42,7 @@ class MecSimulator:
             subtask_processes.append(p)
 
         yield self.env.all_of(subtask_processes)
+        print(f"Overall task completed at t={self.env.now}")
 
     def run_subtask(self, subtask: _Subtask, compute_node: ComputeNode):
         print(f"Subtask leaves at t={self.env.now}")
