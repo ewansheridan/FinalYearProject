@@ -12,9 +12,9 @@ class MecSimulator:
         self.compute_nodes = []
         self.task_id_generator = count()
 
-    def add_node(self, name, mips_per_core, num_of_cores, rtt_ms):
+    def add_node(self, name, speed_per_core_ipms, num_of_cores, rtt_ms):
         self.compute_nodes.append(
-            ComputeNode(self.env, name, mips_per_core, num_of_cores, rtt_ms)
+            ComputeNode(self.env, name, speed_per_core_ipms, num_of_cores, rtt_ms)
         )
 
     @property
@@ -22,8 +22,8 @@ class MecSimulator:
         t = f"{self.env.now:.2f}".rstrip("0").rstrip(".")
         return f"{f't = {t} ms':<15}"
 
-    def submit_task(self, total_mi, num_of_subtasks):
-        self.env.process(self.run_task(Task(total_mi, num_of_subtasks, next(self.task_id_generator))))
+    def submit_task(self, total_num_of_instructions, num_of_subtasks):
+        self.env.process(self.run_task(Task(total_num_of_instructions, num_of_subtasks, next(self.task_id_generator))))
 
     def run_task(self, task: Task):
         """
@@ -33,7 +33,7 @@ class MecSimulator:
         and last 20% on the local device. all of this can be replaced by a smarter
         scheduling function later
         """
-        print(f"{self.wallclock_ms}Overall task {task.id} started")
+        print(f"{self.wallclock_ms}Overall task {task.task_id} started")
 
         halfway_point = len(task.subtasks) * 50 // 100
         other_breakpoint = len(task.subtasks) * 80 // 100
@@ -51,7 +51,7 @@ class MecSimulator:
             subtask_processes.append(p)
 
         yield self.env.all_of(subtask_processes)
-        print(f"{self.wallclock_ms}Overall task {task.id} completed")
+        print(f"{self.wallclock_ms}Overall task {task.task_id} completed")
 
 
     def run_subtask(self, subtask: Subtask, compute_node: ComputeNode):
@@ -63,9 +63,7 @@ class MecSimulator:
             yield request
 
             print(f"{self.wallclock_ms}Subtask {subtask.idStr} starts executing in {compute_node.name}")
-            yield self.env.timeout(
-                1000 * subtask.mi / compute_node.mips_per_core
-            )
+            yield self.env.timeout(subtask.num_of_instructions / compute_node.speed_per_core_ipms)
             print(f"{self.wallclock_ms}Subtask {subtask.idStr} finishes executing")
 
         yield self.env.timeout(compute_node.rtt_ms / 2)
