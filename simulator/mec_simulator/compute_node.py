@@ -9,3 +9,6 @@ class ComputeNode:
         self.rtt_ms = rtt_ms
 
         self.cpu = simpy.Resource(env, capacity=num_of_cores)
+
+    def __str__(self):
+        return self.name

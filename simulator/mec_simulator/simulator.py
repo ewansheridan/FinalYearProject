@@ -54,19 +54,19 @@ class MecSimulator:
         * Waits for that amount of time before freeing the Resource (leaving the "with" block)
         * Waits the other half of the RTT (one-way latency)
         """
-        self.print_elapsed_ms(f"Subtask {subtask.idStr} leaves")
+        self.print_elapsed_ms(f"{subtask} leaves")
         yield self.env.timeout(compute_node.rtt_ms / 2)
 
         with compute_node.cpu.request() as request:
-            self.print_elapsed_ms(f"Subtask {subtask.idStr} requests access to a core in {compute_node.name}")
+            self.print_elapsed_ms(f"{subtask} requests access to a core in {compute_node}")
             yield request
 
-            self.print_elapsed_ms(f"Subtask {subtask.idStr} starts executing in {compute_node.name}")
+            self.print_elapsed_ms(f"{subtask} starts executing in {compute_node}")
             yield self.env.timeout(subtask.num_of_instructions / compute_node.speed_per_core_ipms)
-            self.print_elapsed_ms(f"Subtask {subtask.idStr} finishes executing in {compute_node.name}")
+            self.print_elapsed_ms(f"{subtask} finishes executing in {compute_node}")
 
         yield self.env.timeout(compute_node.rtt_ms / 2)
-        self.print_elapsed_ms(f"Subtask {subtask.idStr} complete!")
+        self.print_elapsed_ms(f"{subtask} complete!")
 
 
 
@@ -78,7 +78,7 @@ class MecSimulator:
         and last 20% on the local device. all of this can be replaced by a smarter
         scheduling function later
         """
-        self.print_elapsed_ms(f"Overall task {task.task_id} started")
+        self.print_elapsed_ms(f"{task} started")
 
         halfway_point = len(task.subtasks) * 50 // 100
         other_breakpoint = len(task.subtasks) * 80 // 100
@@ -94,7 +94,7 @@ class MecSimulator:
             subtask_processes.append(p)
 
         yield self.env.all_of(subtask_processes) # Wait for every subtask
-        self.print_elapsed_ms(f"Overall task {task.task_id} completed!!!!!")
+        self.print_elapsed_ms(f"{task} completed!!!!!")
 
 
 
