@@ -2,10 +2,6 @@ from itertools import count
 
 class Task:
     def __init__(self, total_num_of_instructions, num_of_subtasks, task_id):
-        """
-        * Error checks the parameters
-        * Creates a "subtasks" list of size "num_of_subtasks"
-        """
         if not isinstance(num_of_subtasks, int) or num_of_subtasks <= 0:
             raise ValueError(f"The number of subtasks must be a positive integer")
         if total_num_of_instructions % num_of_subtasks != 0:

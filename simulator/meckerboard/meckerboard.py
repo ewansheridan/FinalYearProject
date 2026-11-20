@@ -1,11 +1,11 @@
 import simpy
+from itertools import count
 
 from .compute_node import ComputeNode
 from .task import Task, Subtask
-from itertools import count
 
 
-class MecSimulator:
+class Meckerboard:
     def __init__(self):
         """
         * Sets up a SimPy environment to simulate everything on
@@ -16,8 +16,6 @@ class MecSimulator:
         self.compute_nodes = []
         self.task_id_generator = count()
 
-
-
     def add_node(self, name, speed_per_core_ipms, num_of_cores, rtt_ms):
         """
         * Creates a ComputeNode with the given parameters
@@ -27,8 +25,6 @@ class MecSimulator:
         self.compute_nodes.append(
             ComputeNode(self.env, name, speed_per_core_ipms, num_of_cores, rtt_ms)
         )
-
-
 
     def print_elapsed_ms(self, message):
         """
@@ -41,8 +37,6 @@ class MecSimulator:
         """
         t = f"{self.env.now:.2f}".rstrip("0").rstrip(".")
         print(f"{f't = {t} ms':<15}", message)
-
-
 
     def _run_subtask(self, subtask: Subtask, compute_node: ComputeNode):
         """
@@ -68,14 +62,12 @@ class MecSimulator:
         yield self.env.timeout(compute_node.rtt_ms / 2)
         self.print_elapsed_ms(f"{subtask} complete!")
 
-
-
     def _run_task(self, task: Task):
         """
         for now, we assume that compute_nodes contains exactly three things, in
         this exact order: [cloud, edge, local]. then this hard-codes the decision
-        to be first 50% of the subtasks execute on cloud, next 30% on the edge,
-        and last 20% on the local device. all of this can be replaced by a smarter
+        to be first 20% of the subtasks execute on cloud, next 40% on the edge,
+        and last 40% on the local device. all of this can be replaced by a smarter
         scheduling function later
         """
         self.print_elapsed_ms(f"{task} started")
@@ -96,8 +88,6 @@ class MecSimulator:
         yield self.env.all_of(subtask_processes) # Wait for every subtask
         self.print_elapsed_ms(f"{task} completed!!!!!")
 
-
-
     def submit_task(self, total_num_of_instructions, num_of_subtasks):
         """
         * Creates a new Task with the given parameters and gives it an ID
@@ -108,8 +98,6 @@ class MecSimulator:
         self.env.process(self._run_task(
             Task(total_num_of_instructions, num_of_subtasks, next(self.task_id_generator))
         ))
-
-
 
     def run(self):
         """
