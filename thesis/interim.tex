@@ -1,4 +1,4 @@
-\documentclass[]{UCD_CS_FYP_Report}
+\documentclass[]{UCD_CS_Interim_Report}
 % Use scalable fonts and Unicode mappings for searchable, copyable PDF text.
 \usepackage{lmodern}
 \input{glyphtounicode}
@@ -98,15 +98,38 @@
 %%%%%%%%%%%%%%%%%%%%%%
 %%% Your Abstract here
 \abstract
-The computational power of laptops, smartphones and other user devices has improved dramatically in recent years. The cloud computing paradigm was first introduced to allow users to execute large computations by performing said computations on servers in datacentres. This meant that large problems could be computed in an acceptable time, but for smaller problems, the network overhead of offloading to the cloud was non-negligible. Multi-access edge computing brought slightly less powerful machines geographically closer to users, which decreased RTTs considerably and improved the overall latency of task completion. 
+The computational power of laptops, smartphones and other user devices has improved dramatically in recent years. The cloud computing paradigm allows users to execute large computations by performing them on servers in datacentres. This means that large problems can be computed in an acceptable time, but for smaller problems, the network overhead of offloading to the cloud can be non-negligible. Multi-access edge computing brings slightly less powerful machines geographically closer to users, which decreases RTTs considerably and improves the overall latency of task completion. 
 
-This project poses the question: \textit{What if some of the computation could be done on the local device itself?} To completely eliminate edge and cloud offloading would be impractical for large tasks, so in this project tasks are divided into subtasks that can run in parallel. A scheduling algorithm divides these subtasks into three groups to run on the cloud, the edge cluster, and the local device itself.
+This project poses the question: \textit{What if some of the computation could be done on the local device itself?} To completely eliminate edge and cloud offloading would be impractical, so in this project tasks are divided into subtasks that can run in parallel. A scheduling algorithm divides these subtasks into three groups to run on the cloud, the edge cluster, and the local device itself.
 
 To facilitate the development and testing of this algorithm, a simulator is also developed using the \textit{SimPy} Python framework. The creation of this simulator and the implementation of the local-device-aware parallel scheduling algorithm form the main body of work for this project.
 
 
 %%%%%%%%
-\chapter{Project Specification}
+\chapter{Introduction}
+The \textit{Multi-access Edge Computing} paradigm can be described as being made up of three layers (see Figure \ref{fig:mec}). The first of these layers is the \textit{Cloud}, where computation can be done fastest, but its network (and physical) distance from the user results in long round-trip times (RTTs). The middle layer, the \textit{Edge}, aims to mitigate the RTT issue by being situated much closer to the user. 
+
+However, the servers at the edge are much less powerful than those at the cloud. This means that for any given task there is a trade-off decision to be made: compute the task quickly at the cloud but suffer a long propagation delay, or leverage the lower network latency of the edge but compromise on slower computation speed.
+
+This decision problem is one of the main motivators of research in the area of MEC scheduling. However, it fails to consider that the third layer, the \textit{User}, is also capable of computation. User devices like smartphones and laptops are often ignored in MEC scheduling, but in recent times their power has improved significantly. The last decade in particular has seen an approximately 10$\times$ increase in mobile phone performance. The \textit{iPhone 7 Plus} (2016) scored 1,155 points in a \textit{Geekbench 6} benchmark test, while the \textit{iPhone 18 Pro Max} (2026) scored 12,565 points. \cite{EveryMacBenchmarks}
+
+Simply adding a third type of compute node to an existing MEC scheduling project would be almost trivial, and so this project also investigates the idea of \textit{parallelisable} tasks. Rather than the deciding which compute node (Cloud, Edge, User) a task should execute on, tasks are treated as being made up of a number of independent \textit{subtasks}, all of which can be executed in parallel. So the problem then becomes deciding \textit{what proportion} of the subtasks should execute on each one of the compute nodes.
+
+This is a worthwhile development to make, as many modern application tasks are \enquote{large} in the sense that they may take a long time to execute on a laptop or phone (rendering a batch of images, for example), but their constituent parts could be executed simultaneously across different compute nodes. Of course, throughout the project it is assumed that a task is inherently parallelisable, and that it has already been partitioned. The simple fact that such tasks exist is justification enough for this assumption, and the scope of this project is simply to focus only on these kinds of tasks.
+
+As discussed in Section \ref{Existing MEC Simulators}, there are many existing ways to simulate a MEC environment, and indeed UCD final year students have made use of these simulators in the past. However, all existing software is overly complex and too general-purpose for the kinds of experiments that will be necessary in this project. The vast amounts of features boasted by each one of these simulators ultimately gets in the way when testing one specific area of MEC (in this case: task scheduling, or more specifically, subtask scheduling).
+
+On top of this, most existing simulators do not directly implement a feature that allows a task to be broken up into subtasks that can execute on separate compute nodes. So, using any existing simulator would require developing an extension for it, and possibly modifying its existing code. Since some software development is as such \enquote{inevitable}, part of this project will be the creation of a brand new simulator from scratch, specifically designed for parallelisable tasks, multi-node execution, and simple easy-to-run simulation.
+
+The \textit{SimPy} framework (see Section \ref{SimPy}) already models the main features of discrete event simulation (the clock, limited resources, events happening at the same time, etc.), so it is used as the underlying engine of the simulator. Despite this, \textit{SimPy} provides a \enquote{bare-bones} starting point for DESs, and the vast majority of the code and implementation-specific details must still be written by the programmer.
+
+Verification and validation of the simulator will be crucial to determine its suitability for use in experiments and tests later in the project. Extenisve unit testing will be undertaken to ensure that the simulator is accurate (within the dimensions of this project's scope) against real-world scenarios.
+
+Using the simulator for testing, and possibly modifying it along the way, a scheduling algorithm for tasks will be proposed. The algorithm will be compared to naive solutions as a baseline, but also against (possibly modified) existing algorithms in related fields, such as parallel subtask scheduling in one cluster, and full-task scheduling in edge computing.
+
+This project should provide a meaningful addition to the field of task scheduling in MEC, not only by introducing a new scheduling algorithm, but also through the introduction of a simulator that is much more intuitive to use than existing competitors. The simulator could be used for future final year projects, or even outside of the university, and could be extended to suit needs outside the scope of this project if necessary.
+
+\section{Project Specification}
 \textbf{Mandatory}
 \vspace{-1.5em}
 \begin{itemize}
@@ -133,18 +156,6 @@ To facilitate the development and testing of this algorithm, a simulator is also
     \item Enhanced algorithm that considers parallelisable tasks of a more complex nature, for
 example, heterogeneous subtasks or dependencies between subtasks
 \end{itemize}
-
-%%%%%%%%
-\chapter{Introduction}
-The \textit{Multi-access Edge Computing} paradigm can be described as being made up of three layers (see Figure \ref{fig:mec}). The first of these layers is the \textit{Cloud}, where computation can be done fastest, but its network (and physical) distance from the user results in long round-trip times (RTTs). The middle layer, the \textit{Edge}, aims to mitigate the RTT issue by being situated much closer to the user. 
-
-However, the servers at the edge are much less powerful than those at the cloud. This means that for any given task there is a trade-off decision to be made: compute the task quickly at the cloud but suffer a long propagation delay, or leverage the lower network latency of the edge but compromise on slower computation speed.
-
-This decision problem is one of the main motivators of research in the area of MEC scheduling. However, it fails to consider that the third layer, the \textit{User}, is also capable of computation. User devices like smartphones and laptops are often ignored in MEC scheduling, but this decade has seen a 
-
-
-\vspace{4em}
-\textit{Introduce your vision of the project here. Describe the domain of the project, and the intended application. A well-written report will answer three key questions: What am I doing in this project? Why is it worth doing? How do I plan to go about it? In this introductory section, offer a concise answer to the What, and follow-up with a compelling account of the Why. Leave the How to a subsequent section. Do not try to do too much in any single section of the report. By providing details in a logical order, you will show that you have a plan for the report and the project.}
 
 %%%%%%%%
 \chapter{Related Work and Ideas}
@@ -195,7 +206,7 @@ Although some implementations have the middle layer consisting of multiple sub-l
     \label{fig:mec}
 \end{figure}
 
-\section{Existing MEC Simulators}
+\section{Existing MEC Simulators} \label{Existing MEC Simulators}
 MEC presents a wide range of research challenges, including (but certainly not limited to) task scheduling, as will be investigated by this project. To test or verify a solution to a MEC problem, simulation of that problem's processes is a necessity. One useful paper for this section was Kunde et al.'s \enquote{Comparison of simulators for fog computing} \cite{kunde2020comp}. There is a collection of simulators and frameworks that are specifically for MEC. In the past, UCD final year projects in this area have tended to use the \textit{iFogSim} simulator, or its successor \textit{iFogSim2}.
 
 \subsection{iFogSim2} \label{iFogSim2}
@@ -331,24 +342,13 @@ In their model, every task has a subtask with no incoming edges (the \textit{ini
 Time-sharing is used, which significantly complicates latency calculations, while also making offloading decisions much harder since processor speed cannot be trusted. One questionable aspect of their scheduling is that as soon as a subtask is \enquote{ready to start} (i.e. all its predecessors have finished), it is placed onto a processor immediately, regardless of the system state. Considering that every subtask is assumed to be non-preemptive, immediately starting all subtasks means that migration to faster processors is not possible. This wouldn't be a major issue if time-sharing was not used, because the speed of a given processor would instead be fixed. These features will not be applied in this project.
 
 %%%%%%%%
-\chapter{Data Considerations}
-In this section you should characterise the nature and scale of the data you are working with. Outline the shape of the data, where you expect to obtain it, and the size of the data. Is it static or dynamic, local or remote, stored or streaming? Is it raw or structured? Is it unfiltered user data, or is it curated by a specialist? What is your rationale for using this data and not other data? If your project looks at callout times for Spanish ambulances, usage rates of French parking lots, alcohol consumption in Germany, and so on, then explain why you are not using Irish data for the project. Indicate the data-cleaning processes that you anticipate will be necessary. What licensing restrictions, if any, apply to your data? Will you be making this data public after your project is completed? Are there any privacy or ethical issues with how the data is to be collected or used? If so, discuss here.
-
-Some or many of these questions may be moot in the case of specific projects, but you should provide compelling answers to any that seem relevant. Since this provides the foundation for your project, your reviewers will be looking closely.
-
-%%%%%%%%
-\chapter{Outline of Approach}
-In this section present an outline of your considered approach to the problem at the centre of your project. Clearly present your design choices, or your choice of algorithms, and any pertinent model parameters. For instance, if you plan to use a genetic algorithm, outline here a sense of your fitness function, major variables, population size, and so on, so that your reviewers can critique your choices. If you opt for a neural architecture, describe your chosen framework, and motivate the number and kinds of layers in your network. In short, be specific about the choices you are committing to at this stage. Being vague and non-specific will not help your case, as your report will be graded in large part on the specificity and perceived wisdom of your choices. Remember also that feedback is intended to help you as you progress to the next stage of your project. If you give reviewers little to chew on, they will not be able to give you specific feedback and guidance.
-
-
-%%%%%%%%
-\chapter{Project Workplan}
+\chapter{Planned Methodology}
 In this section you will present a work plan for the remainder of your project. Show that you have considered the issues carefully, and that you can be trusted to lead a research or development effort. Be as specific as you can about the time you expect to allocate to each work component, and the dependencies they have to each other. A Gantt chart is helpful in this respect, but do show some sense in how you present your plan. A naïve understanding makes for a simplistic plan.
 
 A key part of a successful project is evaluation. It is not enough to just state that your project is a success, or that your friends seem to like it. You must have a plan for evaluating the end result. How you evaluate will depend on the nature of your project, and you should have a serious conversation with your supervisor about evaluation before you get to this stage. Will your work yield quantitative results that can be compared to past work or to established benchmarks? Does your work consider different configurations of a system or a solution that you can compare to each other, allowing you to empirically find the best one? Do you have a sample user pool for your planned application, and are they willing to give you structured qualitative and quantitative feedback (e.g. via a questionnaire)? However you plan to evaluate your project, please sketch your intentions here.
 
 %%%%%%%%
-\chapter{Summary and Conclusions}
+
 In this section you will sum up your report, draw some conclusions about your work so far, and make some general observations about the work to come. You may also use this opportunity to express points of view, or make factual claims, that are more pertinent here than in other sections of the report. If your project raises some ethical concerns, for example about how data or users are treated, then address them here in a thoughtful manner.
 
 Regarding this document, here are some concluding points that you should keep in mind when writing your own. You may use screenshots in your report, but do not overfill your report with them, or with figures of any kind. Make sure that figures earn their keep, and are not just present as space fillers or as eye candy. If you use diagrams or figures from other people’s work, including the web, be sure to cite the creator in the corresponding caption. All things being equal, it is better to construct your own figures than to copy and paste those of others. In any case, always make sure that your images are readable, do not suffer from pixelation or aliasing effects, and that each is clearly numbered, captioned and meaningfully referenced in the main body of the text.
@@ -363,11 +363,14 @@ The dates and means of submission will be communicated to you separately.
 
 %%%%%%%%%%%%%%%%%%%%%%
 %%%% Latex help.
-% \input{latexhelp.tex}
-
+% 
+\chapter{Current Progress \& Challenges}
+\chapter{Future Work \& Work Plan}
 
 %%%%%%%%%%%%%%%%%%%%%%
 %%% Acknowledgements
+
+
 \chapter*{Acknowledgements}
 In your Acknowledgements section, give credit to all the people who helped you in your project.
 
