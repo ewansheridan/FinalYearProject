@@ -19,7 +19,7 @@ class Meckerboard:
     def add_node(self, name, speed_per_core_ipms, num_of_cores, rtt_ms):
         """
         * Creates a ComputeNode with the given parameters
-        * Binds it to the SimPy environment associated with this simulator instance
+        * Binds it to the SimPy environment associated with this board instance
         * Appends that node to the "compute_nodes" list
         """
         self.compute_nodes.append(
@@ -103,7 +103,7 @@ class Meckerboard:
         """
         * Calls the SimPy "run" method on the Environment
         * This keeps executing until the Environment's queue of Events is empty
-        * In this simulator such Events are only queued by executing Tasks and Subtasks
+        * In this board such Events are only queued by executing Tasks and Subtasks
         * So when "run" terminates, all Tasks are finished
         """
         self.env.run()
