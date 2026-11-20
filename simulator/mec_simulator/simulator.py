@@ -80,8 +80,8 @@ class MecSimulator:
         """
         self.print_elapsed_ms(f"{task} started")
 
-        halfway_point = len(task.subtasks) * 50 // 100
-        other_breakpoint = len(task.subtasks) * 80 // 100
+        halfway_point = len(task.subtasks) // 5
+        other_breakpoint = len(task.subtasks) * 3 // 5
         subtask_processes = []
 
         for i, subtask in enumerate(task.subtasks):

@@ -57,11 +57,15 @@ t = 13 ms       Subtask ⟨0:6⟩ finishes executing in Edge Cluster
 t = 13 ms       Subtask ⟨0:7⟩ starts executing in Edge Cluster
 t = 13 ms       Subtask ⟨1:5⟩ starts executing in Edge Cluster
 t = 18 ms       Subtask ⟨0:7⟩ finishes executing in Edge Cluster
+
+...
 t = 18 ms       Subtask ⟨1:5⟩ finishes executing in Edge Cluster
 t = 18 ms       Subtask ⟨1:6⟩ starts executing in Edge Cluster
 t = 18 ms       Subtask ⟨1:7⟩ starts executing in Edge Cluster
 t = 20 ms       Subtask ⟨0:0⟩ requests access to a core in The Cloud
 t = 20 ms       Subtask ⟨0:1⟩ requests access to a core in The Cloud
+...
+
 t = 20 ms       Subtask ⟨0:2⟩ requests access to a core in The Cloud
 t = 20 ms       Subtask ⟨0:3⟩ requests access to a core in The Cloud
 t = 20 ms       Subtask ⟨0:4⟩ requests access to a core in The Cloud
