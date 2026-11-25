@@ -107,7 +107,7 @@ To facilitate the development and testing of this algorithm, a simulator is also
 
 %%%%%%%%
 \chapter{Introduction}
-The \textit{Multi-access Edge Computing} paradigm can be described as being made up of three layers (see Figure \ref{fig:mec}). The first of these layers is the \textit{Cloud}, where computation can be done fastest, but its network (and physical) distance from the user results in long round-trip times (RTTs). The middle layer, the \textit{Edge}, aims to mitigate the RTT issue by being situated much closer to the user. 
+The \textit{Multi-access Edge Computing} paradigm can be described as being made up of three layers (see Figure \ref{fig:mec}). The first of these layers is the \textit{Cloud}, where computation can be done fastest, but its network (and physical) distance from the user results in long round-trip times, or \textit{RTTs}. The middle layer, the \textit{Edge}, aims to mitigate the RTT issue by being situated much closer to the user. 
 
 However, the servers at the edge are much less powerful than those at the cloud. This means that for any given task there is a trade-off decision to be made: compute the task quickly at the cloud but suffer a long propagation delay, or leverage the lower network latency of the edge but compromise on slower computation speed.
 
@@ -115,28 +115,28 @@ This decision problem is one of the main motivators of research in the area of M
 
 Simply adding a third type of compute node to an existing MEC scheduling project would be almost trivial, and so this project also investigates the idea of \textit{parallelisable} tasks. Rather than the deciding which compute node (Cloud, Edge, User) a task should execute on, tasks are treated as being made up of a number of independent \textit{subtasks}, all of which can be executed in parallel. So the problem then becomes deciding \textit{what proportion} of the subtasks should execute on each one of the compute nodes.
 
-This is a worthwhile development to make, as many modern application tasks are \enquote{large} in the sense that they may take a long time to execute on a laptop or phone (rendering a batch of images, for example), but their constituent parts could be executed simultaneously across different compute nodes. Of course, throughout the project it is assumed that a task is inherently parallelisable, and that it has already been partitioned. The simple fact that such tasks exist is justification enough for this assumption, and the scope of this project is simply to focus only on these kinds of tasks.
+This is a worthwhile development to make, as many modern application tasks are \enquote{large} in the sense that they may take a long time to execute on a laptop or phone (rendering a batch of images, for example), but they would run in a reasonable time if their constituent parts could be executed simultaneously across different compute nodes. Throughout the project it is assumed that a task is inherently parallelisable, and that it has already been partitioned. The simple fact that such tasks exist is justification enough for this assumption; the scope of this project is simply focused only on these kinds of tasks.
 
 As discussed in Section \ref{Existing MEC Simulators}, there are many existing ways to simulate a MEC environment, and indeed UCD final year students have made use of these simulators in the past. However, all existing software is overly complex and too general-purpose for the kinds of experiments that will be necessary in this project. The vast amounts of features boasted by each one of these simulators ultimately gets in the way when testing one specific area of MEC (in this case: task scheduling, or more specifically, subtask scheduling).
 
 On top of this, most existing simulators do not directly implement a feature that allows a task to be broken up into subtasks that can execute on separate compute nodes. So, using any existing simulator would require developing an extension for it, and possibly modifying its existing code. Since some software development is as such \enquote{inevitable}, part of this project will be the creation of a brand new simulator from scratch, specifically designed for parallelisable tasks, multi-node execution, and simple easy-to-run simulation.
 
-The \textit{SimPy} framework (see Section \ref{SimPy}) already models the main features of discrete event simulation (the clock, limited resources, events happening at the same time, etc.), so it is used as the underlying engine of the simulator. Despite this, \textit{SimPy} provides a \enquote{bare-bones} starting point for DESs, and the vast majority of the code and implementation-specific details must still be written by the programmer.
+The \textit{SimPy} framework (see Section \ref{SimPy}) already models the main features of discrete event simulation (the clock, limited resources, events happening at the same time, etc.), so it is used as the underlying engine of the simulator. Despite this, \textit{SimPy} provides a \enquote{bare-bones} starting point for DESs, and the vast majority of the code and implementation-specific details must still be written from scratch.
 
 Verification and validation of the simulator will be crucial to determine its suitability for use in experiments and tests later in the project. Extenisve unit testing will be undertaken to ensure that the simulator is accurate (within the dimensions of this project's scope) against real-world scenarios.
 
 Using the simulator for testing, and possibly modifying it along the way, a scheduling algorithm for tasks will be proposed. The algorithm will be compared to naive solutions as a baseline, but also against (possibly modified) existing algorithms in related fields, such as parallel subtask scheduling in one cluster, and full-task scheduling in edge computing.
 
-This project should provide a meaningful addition to the field of task scheduling in MEC, not only by introducing a new scheduling algorithm, but also through the introduction of a simulator that is much more intuitive to use than existing competitors. The simulator could be used for future final year projects, or even outside of the university, and could be extended to suit needs outside the scope of this project if necessary.
+This project should provide a meaningful addition to the field of task scheduling in MEC, not only by introducing a new scheduling algorithm, but also through the introduction of a simulator that is much more intuitive to use than existing competitors. The simulator could be used for future final year projects, or even outside the university, and could be extended to suit needs outside the scope of this project if necessary.
 
 \section{Project Specification}
 \textbf{Mandatory}
 \vspace{-1.5em}
 \begin{itemize}
-    \item Literature review of task scheduling, offloading, parallelism in MEC, and use of local devices as part of a MEC system
-    \item Review of previous FYPs in the same area (Cian Boyle, James Finn, Luke King)
+    \item Literature review of parallel subtask scheduling and the use of local devices as part of a MEC system
+    \item Review of previous FYPs in the same area
     \item Simple implementation of a MEC simulator with three basic levels (cloud, edge, local device) alongside a central scheduler for parallelisable tasks
-    \item Verification and validation that the simulator works properly (e.g. a 100 MI subtask takes 1 second on a 100 MIPS processor, and other similar tests)
+    \item Verification and validation that the simulator works properly (e.g. a 100 instruction subtask takes 1 ms on a 100 ipms processing core, and other similar tests)
     \item A basic first implementation of a scheduling algorithm in the simulator with fixed parameters and a small number of devices and homogeneous subtasks
 \end{itemize}
 \vspace{-0.5em}
@@ -145,7 +145,7 @@ This project should provide a meaningful addition to the field of task schedulin
 \vspace{-1.5em}
 \begin{itemize}
     \item Improvement to the algorithm to consider more users
-    \item Extension of the simulator to allow for more flexibility e.g. different processing speeds i.e. heterogeneous processors, multiple tasks per user, etc.
+    \item Extension of the simulator to allow for more flexibility e.g. different processing speeds (heterogeneous processing cores), multiple tasks per user, etc.
     \item Adaptation of the algorithm to work under dynamically changing conditions
 \end{itemize}
 \vspace{-0.5em}
@@ -158,7 +158,7 @@ example, heterogeneous subtasks or dependencies between subtasks
 \end{itemize}
 
 %%%%%%%%
-\chapter{Related Work and Ideas}
+\chapter{Related Work and Ideas} \label{litreview}
 Much research has been carried out in the fields and areas that are relevant to this project. This chapter outlines literature in the area of cloud computing, and subsequently the motivation for edge computing and MEC. A comparison of the existing ways to simulate a MEC environment is outlined, with reference to past UCD final year projects, followed by a review of different approaches to the scheduling of parallelisable tasks, not only in MEC systems but in general. Finally, research relating to the offloading of tasks due to local constraints is detailed.
 
 \section{Cloud Computing}
@@ -343,28 +343,145 @@ Time-sharing is used, which significantly complicates latency calculations, whil
 
 %%%%%%%%
 \chapter{Planned Methodology}
-In this section you will present a work plan for the remainder of your project. Show that you have considered the issues carefully, and that you can be trusted to lead a research or development effort. Be as specific as you can about the time you expect to allocate to each work component, and the dependencies they have to each other. A Gantt chart is helpful in this respect, but do show some sense in how you present your plan. A naïve understanding makes for a simplistic plan.
+\vspace{-1.5em}
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.99\linewidth]{gantt.png}
+    \caption{Gantt chart illustrating the project plan}
+    \label{fig:gantt}
+\end{figure}
+\vspace{-0.75em}
+Much of the initial work involved refining the deliverables and what exactly the project should address. Throughout October, the literature review (see Chapter \ref{litreview}) was conducted, and November has been spent completing the interim report (this document) and preparing the interim presentation.
 
-A key part of a successful project is evaluation. It is not enough to just state that your project is a success, or that your friends seem to like it. You must have a plan for evaluating the end result. How you evaluate will depend on the nature of your project, and you should have a serious conversation with your supervisor about evaluation before you get to this stage. Will your work yield quantitative results that can be compared to past work or to established benchmarks? Does your work consider different configurations of a system or a solution that you can compare to each other, allowing you to empirically find the best one? Do you have a sample user pool for your planned application, and are they willing to give you structured qualitative and quantitative feedback (e.g. via a questionnaire)? However you plan to evaluate your project, please sketch your intentions here.
+So far, the main work for the project itself has been the simulator's proof of concept (see Chapter \ref{progress}). The next immediate action to be undertaken over the Christmas break will be to have a fully working \textit{version 1} complete before returning for the Spring trimester. This will include features such as delayed task request times, multiple users, and an interface to query processing core availability.
 
-%%%%%%%%
+After that, rigorous verification and validation of the simulator will be needed. This will include unit testing and example simulations. Outputs should match pen-and-paper calculations. Realistic properties of compute nodes will be researched to model sensible simulations. This phase will take a number of weeks, but it can overlap with the implementation of existing algorithms.
 
-In this section you will sum up your report, draw some conclusions about your work so far, and make some general observations about the work to come. You may also use this opportunity to express points of view, or make factual claims, that are more pertinent here than in other sections of the report. If your project raises some ethical concerns, for example about how data or users are treated, then address them here in a thoughtful manner.
+Many problems similar to this project's have been investigated before, and so numerous scheduling algorithms exist that can be implemented in the simulator. However, most of these will address a related but distinct problem (e.g. no subtask parallelisation) and so may need slight modification for use in this project's context.
 
-Regarding this document, here are some concluding points that you should keep in mind when writing your own. You may use screenshots in your report, but do not overfill your report with them, or with figures of any kind. Make sure that figures earn their keep, and are not just present as space fillers or as eye candy. If you use diagrams or figures from other people’s work, including the web, be sure to cite the creator in the corresponding caption. All things being equal, it is better to construct your own figures than to copy and paste those of others. In any case, always make sure that your images are readable, do not suffer from pixelation or aliasing effects, and that each is clearly numbered, captioned and meaningfully referenced in the main body of the text.
+In February, work can begin on developing a new scheduling algorithm. This may draw upon features from the existing algorithms implemented in January. After three weeks, it is expected that the nascent algorithm should at least outperform the placeholder \textit{20:40:40} algorithm (see Chapter \ref{progress}), and it should achieve reasonable task completion times, though there will be some room for improvement.
 
-Ensure that there is a cohesive argument expressed in the text of the report and that it is not simply a bag of diagrams, screenshots and wishful thinking. Every report should tell a story, so know what story you want to tell. When you include images, make sure they are readable and truly add to the discussion.
-	
-Make sure your language is professional throughout, and steer a course between pompous and colloquial. Maintain authorial distance and do not overuse “me,” “I” and “our.” Your are writing for a professional audience who will judge you on the quality of your prose, so use a grammar and a spelling checker. 
+March will be spent improving the algorithm, and testing it against the modified existing algorithms. It is possible that there may be numerous algorithms developed rather than one singular algorithm, in which case the different implementations will all be compared against each other.
 
-Use LaTeX if you wish – this is recommended if you plan to use mathematical formulae in your report, but in any case, keep the general spacing and font/style you find here (Single or 1.5 spacing, 12 pt. font for text, etc.). Be sure to submit a PDF (never a .DOC or .DOCX file) as your report. If you prepare your report in MS Word, as this document has been, save it as a PDF before you submit it. Overall it should be about 18 – 20 pages, including figures, front matter and references, A significant portion of the report will be textual, with approx.. five or six thousand words. Do not rely on images or other filler to write your report for you. 
-The dates and means of submission will be communicated to you separately.
+The concluding weeks of the project will see the completion of the final report and presentation, and all work will be finished before the fourth week of April.
 
 
 %%%%%%%%%%%%%%%%%%%%%%
 %%%% Latex help.
 % 
-\chapter{Current Progress \& Challenges}
+\chapter{Current Progress \& Challenges} \label{progress}
+Outside of writing this report (including the literature review), preparing the interim presentation, and other administrative project tasks; there has been one significant piece of work completed up to this point. A proof of concept simulator has been built in Python using the \textit{SimPy} framework. 
+
+A provisional working title of \textit{Meckerboard} has been chosen for the simulator, as it simulates a MEC environment, and the different compute nodes can be thought of as pieces at different locations on a checkerboard (see Figure \ref{fig:board}). The \codepill{Meckerboard} class embodies an entire simulation, and is the only class needed in the API (see Subsection \ref{mbclass}). Also, although the actual process of partitioning tasks is abstracted away in this project, a somewhat tenuous connection can be drawn to \textit{checkerboard partitioning}, an established technique of dividing tasks into parallel subtasks \cite{bisseling2012partitioning}. 
+
+\section{Architecture}
+
+\subsection{Tasks \& Subtasks}
+Each task is represented by an instance of the \codepill{Task} class. The total number of instructions, and the number of subtasks that make it up are both needed to construct a new \codepill{Task}. A task contains a list of subtasks, each one consisting of (\codepill{total\_num\_of\_instructions} $\div$ \codepill{num\_of\_subtasks}) instructions.
+
+The actual \codepill{Task} and \codepill{Subtask} classes are not meant for public API use, and creation of new tasks is implemented by the \codepill{submit\_task()} method of a \codepill{Meckerboard} instance (see Subsection \ref{mbclass})
+
+\begin{figure}[!b]
+    \centering
+    \includegraphics[width=0.99\linewidth]{board.png}
+    \caption{Example of subtasks being allocated to three compute nodes on a \textit{Meckerboard}}
+    \label{fig:board}
+\end{figure}
+
+As of the existing version, a task is not inherently tied to a specific user in any way. The reason for this is mainly due to the fact that a user device is simply treated like any other compute node on the board (see Subsection \ref{computenodes}). This is one aspect that will change in later versions of the simulator.
+
+\subsection{Compute Nodes} \label{computenodes}
+In \textit{Meckerboard}, the \codepill{ComputeNode} class is representative of the yellow pieces on the board in Figure \ref{fig:board}, they are places where a subtask can be executed. An instance maintains attributes such as its name, how many processing cores it has, and the RTT associated with it; but more importantly it encapsulates an instance of a \textit{SimPy} \codepill{Resource} class.
+
+In \textit{SimPy}, a \codepill{Resource} models a pool of service units, each of which may be occupied for some duration to carry out some work, for example a call centre full of phone operators. Each service unit in a \codepill{Resource} isn't explicitly expressed as an individual entity; rather the \codepill{Resource} is seen to have some capacity, some of which is available and some of which is occupied.
+
+This is a very useful starting point for representing a compute node such as an edge cluster or cloud server. As can be seen in Figure \ref{fig:computenode}, a compute node has some number of processing cores. A subtask can then occupy a core for some duration of time (to simulate that subtask being executed) before subsequently releasing it again.
+
+It may be the case that when a subtask \enquote{arrives} at a compute node that all of the processing cores are busy. A queue is needed to allow for subtasks to wait to be processed. The \codepill{Resource} class has this functionality built-in, and so subtasks that arrive at a compute node get access to a core on a \textit{first come, first served} basis (a traditional FIFO queue). 
+
+This FIFO queueing, combined with naive scheduling, yields unsatisfactory results (see Section \ref{sims}). Subsequent versions of the simulator may instead use a \codepill{PriorityResource} which uses a priority queue. Low priority could be assigned to subtasks whose siblings have a long delay, where the overall task completion time of their parent task would remain unaffected. This would allow subtasks that are \textit{stragglers} in their respective task to go first, potentially improving average task latency globally.
+
+If \textit{preemption} (and possibly as a consquence, migration) is needed as an alternative way to handle subtasks competing, \textit{SimPy} offers another class in the same family: the \codepill{PreemptiveResource}. As such, updating the simulator would require minimal changes to the existing configuration.
+
+Like tasks and subtasks, the \codepill{ComputeNode} class is hidden from the public API, and construction is handled by the \codepill{Meckerboard}'s associated \codepill{add\_node()} method (see Subsection \ref{mbclass}). This is mainly to abstract away the \textit{SimPy} environment and its associated boilerplate.
+
+\begin{figure}[!b]
+    \centering
+    \includegraphics[width=0.75\linewidth]{computenode.png}
+    \caption{Internal structure of a compute node with 4 cores; 3 subtasks wait to be executed}
+    \label{fig:computenode}
+\end{figure}
+
+\subsection{Meckerboard} \label{mbclass}
+At a high level, one \codepill{Meckerboard} instance can be thought of as one simulation's environment. It houses all the compute nodes, and handles subtasks' execution on said nodes (see Figure \ref{fig:board}). In fact, the primary job of the \codepill{Meckerboard} class is to encapsulate a \textit{SimPy} environment. The simulated time needed for a subtask to traverse the network, queue for a core, and execute, is all achieved using \textit{SimPy} timeouts and processes.
+
+These delays are implemented with Python \textit{generators}. Generators are how \textit{SimPy} processes (events that can be waited on) work. A generator is similar to a Python \textit{function}, except its execution can be paused and resumed using the \codepill{yield} keyword. Conceptually, generators resume once a desired amount of simulated time has elapsed, or once another object resumes them.
+
+Running a subtask can be represented by a generator. First, half the RTT must elapse. Then the subtask requests access to a core. The compute node resumes the generator once a core becomes available. The subtask's processing time then elapses. Finally, the other half of the RTT must elapse. Formal definitions for these latencies are detailed in Section \ref{model}. Below is a slightly simplified version of the \codepill{\_run\_subtask()} generator method:
+
+\begin{minted}{python3}
+def _run_subtask(self, subtask, compute_node):
+    # subtask leaves
+    yield self.env.timeout(compute_node.rtt_ms / 2)
+
+    with compute_node.cpu.request() as request:
+        # subtask requests access to a core
+        yield request
+        # subtask starts processing on the core
+        yield self.env.timeout(subtask_processing_delay)
+    
+    # finished processing, subtask leaves the compute node
+    yield self.env.timeout(compute_node.rtt_ms / 2)
+\end{minted}
+
+In a similar way, the running of an entire task can also be modelled with a generator. Instead of directly working with \textit{SimPy} timeouts, it yields (waits to be resumed by) multiple processes of the \codepill{\_run\_subtask()} generator method.
+
+\section{Model} \label{model}
+s
+
+\section{Simulations} \label{sims}
+As a proof of concept, a small simulation was run to demonstrate that the simulator works as exected. Since no scheduling algorithm has yet been developed, the simple placeholder \textit{20:40:40} algorithm is used. It allocates $\approx20\%$ of every task's subtasks to be executed on the cloud, $\approx40\%$ to be executed at the edge, and $\approx40\%$ to be executed on the local device.
+
+This fixed algorithm does not take into account the capacity of the compute nodes, the size of the subtasks, or the queueing times at the compute nodes. It is simply a naive fixed split. Results show that this approach is not at all optimal; it can be the case that one task can finish in half the time of a realtively equally sized task despite both of them starting at the same time.
+
+For the simple example, the following parameters were chosen:
+
+\textbf{Cloud:} To ensure there is no queuing, the cloud has 100 cores. Each core has a fast processing speed of 60 instructions per ms. There is a long RTT of 50ms to and from the cloud.
+
+\textbf{Edge:} There are only two cores, each with a speed of 6 instructions per ms, to demonstrate less computational power than the cloud. The edge has a much shorter RTT of 30 ms.
+
+\textbf{User:} The single core runs at only 3 instructions per ms, but there is no RTT delay at all.
+    
+This is the real code that runs the aforementioned simulation. It is noticeably more concise, readable, and easy to implement than that of the simulators discussed in Section \ref{Existing MEC Simulators}, further emphasising the need for this simulator in the first place.
+
+\begin{minted}{python3}
+board = Meckerboard()
+
+board.add_node(name="Cloud", speed_per_core_ipms=60, num_of_cores=100, rtt_ms=50)
+board.add_node(name="Edge", speed_per_core_ipms=6, num_of_cores=2, rtt_ms=30)
+board.add_node(name="User", speed_per_core_ipms=3, num_of_cores=1, rtt_ms=0)
+
+board.submit_task(total_num_of_instructions=300, num_of_subtasks=5)
+board.submit_task(total_num_of_instructions=360, num_of_subtasks=6)
+
+board.run()
+\end{minted}
+
+The results of the simulation can be observed in Figure \ref{fig:proofofconcept}. There are two tasks, one made of five subtasks and the other made up of six. Figure \ref{fig:board} illustrates this specific scenario. All subtasks are 60 instructions in size. Despite the two tasks' similarities, task ⟨1⟩ takes almost twice the time to complete, where task ⟨0⟩ is finished after 51 ms.
+
+Primarily, this is caused by the over-allocation of subtasks to the local device, as can be seen in the green bars in the below figure. It only has one core, and so subtasks ⟨1:3⟩, ⟨1:4⟩, and ⟨1:5⟩ must wait until 40 ms, 60 ms, and 80 ms respectively to begin executing. This makes these three subtasks \textit{stragglers}; the rest of the subtasks in task ⟨1⟩ are finished after 51 ms, the same duration it took task ⟨0⟩ to complete.
+
+On top of this, task ⟨0⟩ has its own straggler, although to a less dramatic extent. 11 ms are spent waiting for subtask ⟨0:0⟩ to complete, and task ⟨0⟩ would have finished after only 40 ms otherwise. The cloud's long RTT is the reason for this delay.
+
+The simulation's results are all accurate and have been against calculations done by hand. They demonstrate that the simulator functions as expected. However, the fixed \textit{20:40:40} algorithm leaves much to be desired, and it is clear that a more intelligent algorithm is necessary.
+
+\begin{figure}[!b]
+    \centering
+    \includegraphics[width=0.99\linewidth]{proofofconcept.png}
+    \caption{Results of a simulation in the \textit{Meckerboard v0} simulator}
+    \label{fig:proofofconcept}
+\end{figure}
+
 \chapter{Future Work \& Work Plan}
 
 %%%%%%%%%%%%%%%%%%%%%%
