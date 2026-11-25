@@ -94,6 +94,12 @@ class Meckerboard:
         * Calls the internal "run_task" generator method on it
         * This creates a generator object for the execution of that Task
         * Passes that generator to a SimPy Process
+
+        Future update: Add an optional delay_ms=0 argument to control when the
+        task starts. Create the Task and assign its ID at submission. For a
+        positive delay, simpy.util.start_delayed() can wait for a timeout before
+        creating the task's Process at the new simulation time. For zero delay,
+        use env.process() directly as usual.
         """
         self.env.process(self._run_task(
             Task(total_num_of_instructions, num_of_subtasks, next(self.task_id_generator))
